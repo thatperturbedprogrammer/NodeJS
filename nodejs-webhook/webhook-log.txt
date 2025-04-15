@@ -1,0 +1,11 @@
+Received at 2025-04-15T12:04:18.793Z:
+{
+  "event": "user.signup",
+  "user": {
+    "id": 123,
+    "name": "Jane Doe",
+    "email": "jane@example.com"
+  },
+  "timestamp": "2025-04-15T12:04:18.699Z"
+}
+
