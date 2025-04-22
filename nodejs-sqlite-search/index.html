@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic DB Search</title>
+</head>
+
+<body>
+    <form action="/">
+
+        <input type="text" name="insertName" id="insertName" placeholder="Product Name" required>
+        <input type="text" name="insertPrice" id="insertPrice" placeholder="Product Price" required>
+
+        <button type="button" onclick="insertDataDb()">Insert data db</button>
+
+        <br />
+        <br />
+
+        <input type="text" name="searchInput" id="searchInput" placeholder="Search" required>
+        <button type="button" onclick="handleSearch()">Search</button>
+
+    </form>
+
+    <br />
+    <button type="button" onclick="getData()">Get data dummy json</button>
+    <button type="button" onclick="getDataDb()">Get data db</button>
+
+    <div id="jsonDisplay"></div>
+</body>
+
+<script>
+    // search from db
+    async function handleSearch() {
+        const searchInput = document.getElementById("searchInput").value;
+        // console.log(searchInput)
+
+        // searchInput
+
+        const url = "http://localhost:4000/search";
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ searchInput: searchInput })
+        });
+        const responseResult = await response.json()
+
+        // search result display
+
+        const searchResultDisplay = document.createElement("h1");
+
+        if (responseResult.length === 0) {
+            searchResultDisplay.textContent = "No product found"
+        }
+        else {
+            searchResultDisplay.textContent = JSON.stringify(responseResult)
+        }
+        document.body.appendChild(searchResultDisplay)
+    }
+
+    // get data from db
+
+    async function getDataDb() {
+        const url = "http://localhost:4000/products";
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        const responseResult = await response.json()
+
+        // get result display
+
+        const getResultDisplay = document.createElement("h1");
+        getResultDisplay.textContent = JSON.stringify(responseResult)
+        document.body.appendChild(getResultDisplay)
+
+    }
+
+    // get data from dummy json
+    async function getData() {
+        const url = "https://dummyjson.com/products"
+
+        try {
+
+            const response = await fetch(url);
+            const jsonData = await response.json()
+            console.log(jsonData.products)
+
+            const productsDataArray = jsonData.products
+            let productName = ""
+            let productDesc = ""
+            let productPrice = ""
+            let productImage = ""
+            for (let productItem of productsDataArray) {
+                productName = productItem["title"];
+                productDesc = productItem["description"]
+                productPrice = productItem["price"]
+                productImage = productItem["images"]
+                console.log(JSON.stringify(productName))
+
+                // elements
+
+                // heading name
+                const headingProductName = document.createElement("h2");
+                headingProductName.textContent = productName
+                const jsonDisplay = document.getElementById("jsonDisplay");
+                jsonDisplay.appendChild(headingProductName)
+
+                // paragraph description
+                const paragraphProductDescription = document.createElement("p");
+                paragraphProductDescription.textContent = productDesc
+                jsonDisplay.appendChild(paragraphProductDescription)
+
+                // paragraph price
+                const paragraphProductPrice = document.createElement("p");
+                paragraphProductPrice.textContent = productPrice
+                jsonDisplay.appendChild(paragraphProductPrice)
+
+                // product image
+                const imageProduct = document.createElement("img");
+                imageProduct.setAttribute("src", productImage)
+                imageProduct.setAttribute("width", 100)
+                imageProduct.setAttribute("height", 100)
+                jsonDisplay.appendChild(imageProduct)
+
+            }
+
+            const productsDataArrayStringFormat = JSON.stringify(productsDataArray)
+
+            // const jsonDisplay = document.getElementById("jsonDisplay");
+
+
+            // jsonDisplay.textContent = productsDataArrayStringFormat
+        } catch (err) {
+            console.error(err.message)
+        }
+    }
+
+    // insert data into db
+    async function insertDataDb() {
+
+        const url = "http://localhost:4000/insert";
+
+        const insertName = document.getElementById("insertName").value;
+        const insertPrice = document.getElementById("insertPrice").value;
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                insertName: insertName,
+                insertPrice: insertPrice
+            })
+        });
+
+        const responseResult = await response.json()
+
+        // insert result display
+
+        const insertResultDisplay = document.createElement("h3");
+        insertResultDisplay.textContent = JSON.stringify(responseResult)
+        document.body.appendChild(insertResultDisplay)
+
+    }
+
+
+</script>
+
+</html>
