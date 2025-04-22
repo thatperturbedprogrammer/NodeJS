@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Manager</title>
+</head>
+
+<body>
+
+    <form action="/">
+        <input type="text" name="accountName" id="accountName" placeholder="Account Name" required>
+        <input type="password" name="passwordName" id="passwordName" placeholder="Password" required>
+
+        <br />
+        <button type="button" onclick="handleSave()">Save Password</button>
+    </form>
+
+    <button type="button" onclick="handleDisplayPasswords()">My Passwords</button>
+
+
+    <script>
+
+        // handle save
+        async function handleSave() {
+            const accountName = document.getElementById("accountName").value;
+            const passwordName = document.getElementById("passwordName").value;
+
+            const url = "http://localhost:4000/savepassword"
+            const response = await fetch(url,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+
+                    },
+                    body: JSON.stringify({
+                        accountName: accountName,
+                        passwordName: passwordName
+                    })
+                });
+
+            const responseResult = await response.json();
+            console.log(responseResult)
+            const passwordSavedDiv = document.createElement("div");
+            passwordSavedDiv.textContent = JSON.stringify(responseResult);
+            document.body.appendChild(passwordSavedDiv)
+
+        }
+
+        // display passwords
+        function handleDisplayPasswords() {
+            const secretInput = document.createElement("input");
+            secretInput.setAttribute("type", "password");
+            secretInput.setAttribute("placeholder", "Enter your secret before accessing passwords");
+
+            document.body.appendChild(secretInput)
+
+            const secretInputButton = document.createElement("button");
+            secretInputButton.setAttribute("type", "button");
+            secretInputButton.textContent = "Verify Secret"
+
+            document.body.appendChild(secretInputButton)
+
+            secretInputButton.addEventListener("click", async () => {
+
+                const secretEntered = secretInput.value
+                // console.log(secretInput.value)
+
+                const url = "http://localhost:4000/verifysecret"
+
+                const response = await fetch(
+                    url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+
+                    },
+                    body:
+                        JSON.stringify({ secretEntered: secretEntered })
+                },
+
+                )
+
+                const responseResult = await response.json();
+                const secretInDb = responseResult
+                // console.log("Secret in db: ", secretInDb)
+                if (secretInDb[0].secret === secretEntered) {
+                    const validSecretDiv = document.createElement("div");
+                    validSecretDiv.textContent = JSON.stringify(secretInDb);
+                    document.body.appendChild(validSecretDiv)
+
+                }
+                else {
+                    const invalidSecretDiv = document.createElement("div");
+                    invalidSecretDiv.textContent = secretInDb;
+                    document.body.appendChild(invalidSecretDiv)
+                }
+            })
+        }
+    </script>
+</body>
+
+</html>
