@@ -13,29 +13,31 @@
         <input type="text" name="userInput" id="userInput" placeholder="Enter something" required>
         <button type="button" onclick="handleSendRequestClick()">Send Request</button>
     </form>
-</body>
 
-<script>
+    <script>
 
-    async function handleSendRequestClick() {
-        const userInput = document.getElementById("userInput").value
-        const url = "http://localhost:4002/sendrequest"
-        const response = await fetch(url, {
-            method: "POST",
-            "Content-Type": "application/json",
-            body: JSON.stringify({
-                userInput: userInput
+        async function handleSendRequestClick() {
+            const userInput = document.getElementById("userInput").value
+            console.log(userInput)
+            const url = "http://localhost:4002/sendrequest"
+            const response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", },
+                body: JSON.stringify({
+                    userInput: userInput
+                })
+
             })
 
-        })
+            const responseResult = await response.json();
 
-        const responseResult = await response.json();
+            const resultDiv = document.createElement("div");
+            resultDiv.textContent = JSON.stringify(responseResult);
 
-        const resultDiv = document.createElement("div");
-        resultDiv.textContent = JSON.stringify(responseResult);
+            document.body.appendChild(resultDiv);
+        }
+    </script>
+</body>
 
-        document.body.appendChild(resultDiv);
-    }
-</script>
 
 </html>
