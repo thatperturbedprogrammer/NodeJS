@@ -1,4 +1,5 @@
 const tokenBucket = [1, 1, 1, 1];
+// let intervalStarted = false; // setInterval flag
 
 function rateLimiterTokenBucket(req, res, next) {
   // rate limiting logic
@@ -12,8 +13,11 @@ function rateLimiterTokenBucket(req, res, next) {
   } else {
     res.status(429).json({ error: "Too many requests" });
     // filling after 10 seconds
-    setInterval(() => {
+    setTimeout(() => {
       if (tokenBucket.length < 4) {
+        tokenBucket.push(1);
+        tokenBucket.push(1);
+        tokenBucket.push(1);
         tokenBucket.push(1);
         console.log("After filling: ", tokenBucket);
       }
