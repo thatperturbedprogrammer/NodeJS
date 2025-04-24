@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Uploader</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f6fa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 50px 20px;
+        }
+
+        h1 {
+            color: #2f3640;
+            margin-bottom: 30px;
+        }
+
+        form {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        input[type="file"] {
+            border: 1px solid #dcdde1;
+            background-color: #e0f3ff;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        input[type="submit"] {
+            background-color: #00a8ff;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0097e6;
+        }
+
+        button {
+            margin-top: 30px;
+            background-color: #44bd32;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #4cd137;
+        }
+
+        .success-div {
+            background-color: #ffffff;
+            color: #1db606;
+            font-weight: bold;
+            padding: 5px;
+            margin: 5px;
+        }
+
+        .files-display {
+            margin-top: 20px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .file-item {
+            padding: 10px;
+            border-bottom: 1px solid #f1f2f6;
+        }
+
+        .file-item:last-child {
+            border-bottom: none;
+        }
+
+        .file-name {
+            font-weight: bold;
+        }
+
+        .file-info {
+            color: #718093;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Single File Upload</h1>
+
+    <form enctype="multipart/form-data" onsubmit="uploadFiles(event)">
+        <input type="file" name="myfile" required />
+        <input type="submit" value="Submit">
+        <div id="successDiv" class="success-div"></div>
+
+    </form>
+
+    <button type="button" onclick="getFiles()">Get Uploaded Files</button>
+
+
+    <div id="filesContainer" class="files-display"></div>
+
+    <script>
+
+        async function uploadFiles(event) {
+            event.preventDefault(); // prevents form from reloading the page
+
+            const form = document.querySelector("form");
+            const formData = new FormData(form);
+
+            const response = await fetch("http://localhost:4005/upload", {
+                method: "POST",
+                body: formData
+            });
+
+            const responseResult = await response.json();
+
+            const successMessageDiv = document.getElementById("successDiv");
+            successMessageDiv.textContent = JSON.stringify(responseResult)
+        }
+
+        async function getFiles() {
+            const response = await fetch("http://localhost:4005/files");
+            const responseResult = await response.json();
+            console.log(responseResult)
+
+            if (responseResult.data) {
+                const files = responseResult.data;
+                const container = document.getElementById("filesContainer");
+                container.innerHTML = "";
+
+                files.forEach(file => {
+                    const fileDiv = document.createElement("div");
+                    fileDiv.className = "file-item";
+
+                    const name = document.createElement("div");
+                    name.className = "file-name";
+                    name.textContent = file.originalName || "Unnamed File";
+
+                    const info = document.createElement("div");
+                    info.className = "file-info";
+                    info.textContent = `Size: ${formatBytes(file.size)} | Type: ${file.type || "N/A"}`;
+
+                    const downloadLink = document.createElement("a");
+                    downloadLink.href = `/uploads/${file.storedName}`;
+                    downloadLink.textContent = "View File";
+
+
+                    fileDiv.appendChild(name);
+                    fileDiv.appendChild(info);
+                    fileDiv.appendChild(downloadLink);
+
+                    container.appendChild(fileDiv);
+                });
+            }
+            else {
+                const errorMessage = responseResult.message;
+                const messageDiv = document.createElement("div");
+                messageDiv.className = "file-item";
+                messageDiv.textContent = errorMessage
+                container.appendChild(messageDiv);
+
+            }
+
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return "0 Bytes";
+            const k = 1024;
+            const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+        }
+    </script>
+</body>
+
+</html>
