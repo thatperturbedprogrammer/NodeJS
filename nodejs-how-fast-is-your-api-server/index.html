@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Fast is your API Server</title>
+</head>
+
+<body>
+    <form action="/">
+
+        <div id="one-request-container">
+            <input type="text" name="onereq" id="onereq" placeholder="Enter something" required>
+            <button type="button" onclick="sendOneRequest()">Send One Request</button>
+        </div>
+        <div id="ten-requests-container">
+            <input type="text" name="tenreq" id="tenreq" placeholder="Enter something" required>
+
+            <button type="button" onclick="sendTenRequests()">Send Ten Requests</button>
+
+        </div>
+        <div id="hundred-requests-container">
+            <input type="text" name="hundredreq" id="hundredreq" placeholder="Enter something" required>
+
+            <button type="button" onclick="sendHundredRequests()">Send Hundred Requests</button>
+
+        </div>
+        <div id="thousand-requests-container">
+            <input type="text" name="thousandreq" id="thousandreq" placeholder="Enter something" required>
+
+            <button type="button" onclick="sendThousandRequests()">Send Thousand Requests</button>
+
+        </div>
+        <div id="ten-thousand-requests-container">
+            <input type="text" name="tenthousandreq" id="tenthousandreq" placeholder="Enter something" required>
+
+            <button type="button" onclick="sendTenThousandRequests()">Send Ten Thousand Requests</button>
+
+        </div>
+        <div id="one-lakh-requests-container">
+            <input type="text" name="onelakhreq" id="onelakhreq" placeholder="Enter something" required>
+
+            <button type="button" onclick="sendOneLakhRequests()">Send One Lakh Requests</button>
+
+        </div>
+
+        <!-- Round Trip -->
+        </div>
+        <div id="ten-requests-roundtrip-container">
+            <input type="text" name="tenreqroundtrip" id="tenreqroundtrip" placeholder="Enter something" required>
+
+            <button type="button" onclick="sendTenRequestsForRoundTrip()">Send Ten Requests for Round Trip
+                calculation</button>
+
+        </div>
+    </form>
+
+    <script>
+        async function sendOneRequest() {
+            const onereq = document.getElementById("onereq").value
+
+            let timeWhenReqSent = Date.now();
+            console.log(onereq)
+            const url = "http://localhost:4008/sendrequest"
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    onereq: onereq,
+                    timeWhenReqSent: timeWhenReqSent
+                })
+            })
+            const responseResult = await response.json();
+
+            const oneReqContainerDiv = document.getElementById("one-request-container")
+
+            const responseDiv = document.createElement("h4");
+            responseDiv.textContent = JSON.stringify(responseResult);
+            oneReqContainerDiv.appendChild(responseDiv)
+
+        }
+
+
+        async function sendTenRequests() {
+            const tenreq = document.getElementById("tenreq").value
+            let timeWhenReqSent = Date.now();
+
+            const url = "http://localhost:4008/sendrequest"
+
+            const responses = []
+            for (let i = 1; i <= 10; i++) {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        tenreq: tenreq,
+                        timeWhenReqSent: timeWhenReqSent
+                    })
+
+                })
+                const responseResult = await response.json();
+
+                responses.push(responseResult)
+                console.log(responses)
+
+            }
+
+            // Show all 10 responses
+            responses.forEach((res, i) => {
+                const tenReqContainerDiv = document.getElementById("ten-requests-container")
+                const responseDiv = document.createElement("h4");
+                responseDiv.textContent = `Response ${i + 1}: ${JSON.stringify(res)}`;
+                tenReqContainerDiv.appendChild(responseDiv);
+            });
+
+        }
+
+        async function sendHundredRequests() {
+            const hundredreq = document.getElementById("hundredreq").value
+            let timeWhenReqSent = Date.now();
+
+            const url = "http://localhost:4008/sendrequest"
+
+            const responses = []
+            for (let i = 1; i <= 100; i++) {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        hundredreq: hundredreq,
+                        timeWhenReqSent: timeWhenReqSent
+                    })
+
+                })
+                const responseResult = await response.json();
+
+                responses.push(responseResult)
+                // console.log(responses)
+
+            }
+
+            // Show all 100 responses
+            responses.forEach((res, i) => {
+                const hundredReqContainerDiv = document.getElementById("hundred-requests-container")
+                const responseDiv = document.createElement("h4");
+                responseDiv.textContent = `Response ${i + 1}: ${JSON.stringify(res)}`;
+                hundredReqContainerDiv.appendChild(responseDiv);
+            });
+
+        }
+
+        async function sendThousandRequests() {
+            const thousandreq = document.getElementById("thousandreq").value
+            let timeWhenReqSent = Date.now();
+
+            const url = "http://localhost:4008/sendrequest"
+
+            const responses = []
+            for (let i = 1; i <= 1000; i++) {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        thousandreq: thousandreq,
+                        timeWhenReqSent: timeWhenReqSent
+                    })
+
+                })
+                const responseResult = await response.json();
+
+                responses.push(responseResult)
+                // console.log(responses)
+
+            }
+
+            // Show all 1000 responses
+            responses.forEach((res, i) => {
+                const thousandReqContainerDiv = document.getElementById("thousand-requests-container")
+                const responseDiv = document.createElement("h4");
+                responseDiv.textContent = `Response ${i + 1}: ${JSON.stringify(res)}`;
+                thousandReqContainerDiv.appendChild(responseDiv);
+            });
+
+        }
+
+        async function sendTenThousandRequests() {
+            const tenthousandreq = document.getElementById("tenthousandreq").value
+            let timeWhenReqSent = Date.now();
+
+            const url = "http://localhost:4008/sendrequest"
+
+            const responses = []
+            for (let i = 1; i <= 10000; i++) {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        tenthousandreq: tenthousandreq,
+                        timeWhenReqSent: timeWhenReqSent
+                    })
+
+                })
+                const responseResult = await response.json();
+
+                responses.push(responseResult)
+                // console.log(responses)
+
+            }
+
+            // Show all 10000 responses
+            responses.forEach((res, i) => {
+                const tenthousandReqContainerDiv = document.getElementById("ten-thousand-requests-container")
+                const responseDiv = document.createElement("h4");
+                responseDiv.textContent = `Response ${i + 1}: ${JSON.stringify(res)}`;
+                tenthousandReqContainerDiv.appendChild(responseDiv);
+            });
+
+        }
+
+        async function sendOneLakhRequests() {
+            const onelakhreq = document.getElementById("onelakhreq").value
+            let timeWhenReqSent = Date.now();
+
+            const url = "http://localhost:4008/sendrequest"
+
+            const responses = []
+            for (let i = 1; i <= 100000; i++) {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        onelakhreq: onelakhreq,
+                        timeWhenReqSent: timeWhenReqSent
+                    })
+
+                })
+                const responseResult = await response.json();
+
+                responses.push(responseResult)
+                // console.log(responses)
+
+            }
+
+            // Show all 100000 responses
+            responses.forEach((res, i) => {
+                const oneLakhReqContainer = document.getElementById("one-lakh-requests-container")
+                const responseDiv = document.createElement("h4");
+                responseDiv.textContent = `Response ${i + 1}: ${JSON.stringify(res)}`;
+                oneLakhReqContainer.appendChild(responseDiv);
+            });
+
+        }
+
+
+        // Round Trip Time
+        async function sendTenRequestsForRoundTrip() {
+            const tenreqroundtrip = document.getElementById("tenreqroundtrip").value;
+            const url = "http://localhost:4008/sendrequest";
+            const responses = [];
+
+
+            for (let i = 1; i <= 10; i++) {
+                const timeWhenReqSent = Date.now(); // Server will also receive this
+                const startTime = performance.now(); // ⏱️ Start client timer
+
+                try {
+                    const response = await fetch(url, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            tenreqroundtrip,
+                            timeWhenReqSent,
+                            requestNumber: i,
+                        }),
+                    });
+
+                    const result = await response.json();
+                    const endTime = performance.now(); // ⏱️ Stop client timer
+
+                    const roundTripTime = (endTime - startTime).toFixed(2); // in ms
+
+                    responses.push({
+                        serverTimeDifference: result.timeDifference,
+                        clientRoundTripTime: roundTripTime,
+                    });
+
+                } catch (error) {
+                    console.error(`Request ${i} failed`, error);
+                    responses.push({
+                        error: true,
+                        message: `Request ${i} failed`,
+                    });
+                }
+            }
+
+            // Show results
+            responses.forEach((res, i) => {
+                const responseDiv = document.createElement("h4");
+
+                if (res.error) {
+                    responseDiv.textContent = `Response ${i + 1}: ${res.message}`;
+                } else {
+                    responseDiv.textContent = `Response ${i + 1}: Server = ${res.serverTimeDifference} | Client Round-Trip = ${res.clientRoundTripTime}ms`;
+                }
+
+                const tenReqRountTripContainerDiv = document.getElementById("ten-requests-roundtrip-container");
+
+                tenReqRountTripContainerDiv.appendChild(responseDiv);
+            });
+        }
+
+    </script>
+</body>
+
+</html>
