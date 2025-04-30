@@ -1,0 +1,17 @@
+config:
+  target: "http://localhost:3000"
+  phases:
+    - duration: 30 # run test for 30 seconds
+      arrivalRate: 20 # send 20 requests per second
+  processor: "./functions.js"
+  defaults:
+    headers:
+      Content-Type: "application/json"
+scenarios:
+  - flow:
+      - function: "generatePayload"
+      - post:
+          url: "/"
+          json: "{{ payload }}"
+          headers:
+            X-Forwarded-For: "{{ ip }}"
