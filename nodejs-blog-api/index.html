@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog API</title>
+</head>
+
+<body>
+
+    <textarea name="postTitle" id="postTitle" placeholder="Enter Title"></textarea>
+    <textarea name="postBody" id="postBody" placeholder="Enter Body"></textarea>
+
+    <button onclick="handlePostSubmit()">Submit Post</button>
+
+
+    <script>
+        async function handlePostSubmit() {
+            const postTitle = document.getElementById("postTitle").value;
+            const postBody = document.getElementById("postBody").value;
+
+            const url = "http://localhost:5000/api/posts"
+            const response = await fetch(url,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+
+                    },
+                    body: JSON.stringify({
+                        postTitle,
+                        postBody
+                    })
+                });
+
+            const responseResult = await response.json();
+            console.log(responseResult)
+            const postSavedDiv = document.createElement("div");
+            postSavedDiv.textContent = JSON.stringify(responseResult);
+            document.body.appendChild(postSavedDiv)
+
+        }
+    </script>
+</body>
+
+</html>
